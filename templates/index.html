@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Board</title>
+</head>
+<body>
+
+    <h1>Feedback Board</h1>
+
+    <form action="/submit" method="POST">
+
+        <label>Name</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>Feedback</label><br>
+        <textarea name="feedback" rows="5" cols="40" required></textarea><br><br>
+
+        <button type="submit">Submit</button>
+
+    </form>
+    <hr>
+
+<h2>Submitted Feedback</h2>
+
+{% for item in feedbacks %}
+
+<div style="border:1px solid black; padding:10px; margin:10px;">
+
+    <h3>{{ item[1] }}</h3>
+
+    <p>{{ item[2] }}</p>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>
