@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "tanayyyy/flask-two-tier-app"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -29,11 +33,33 @@ pipeline {
                 '''
             }
         }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                    docker tag flask-two-tier-ci-flask-app:latest $IMAGE_NAME:latest
+                    docker tag flask-two-tier-ci-flask-app:latest $IMAGE_NAME:$BUILD_NUMBER
+
+                    docker push $IMAGE_NAME:latest
+                    docker push $IMAGE_NAME:$BUILD_NUMBER
+
+                    docker logout
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Application deployed successfully!'
+            echo 'Pipeline completed successfully!'
         }
 
         failure {
