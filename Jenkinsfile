@@ -23,7 +23,10 @@ pipeline {
 
         stage('Health Check') {
             steps {
-                sh 'curl http://localhost:5000/health'
+                sh '''
+                sleep 15
+                docker exec flask-app python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:5000/health').read().decode())"
+                '''
             }
         }
     }
