@@ -23,9 +23,14 @@ def submit():
     return redirect(url_for("home"))
 
 
-@app.route("/health")
-def health():
-    return {"status": "UP"}, 200
+stage('Health Check') {
+    steps {
+        sh '''
+        sleep 10
+        docker exec flask-app curl http://localhost:5000/health
+        '''
+    }
+}
 
 
 if __name__ == "__main__":
