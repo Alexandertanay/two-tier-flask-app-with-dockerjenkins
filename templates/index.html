@@ -1,38 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Feedback Board</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Deployment Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Feedback Board</h1>
+<div class="container py-5">
 
-    <form action="/submit" method="POST">
+    <!-- Header -->
 
-        <label>Name</label><br>
-        <input type="text" name="name" required><br><br>
+    <div class="text-center mb-5">
 
-        <label>Feedback</label><br>
-        <textarea name="feedback" rows="5" cols="40" required></textarea><br><br>
+        <h1 class="display-4 fw-bold">
+            🚀 DevOps Deployment Dashboard
+        </h1>
 
-        <button type="submit">Submit</button>
+        <p class="lead">
+            CI/CD Pipeline using Flask • Docker • Jenkins • Docker Hub • AWS EC2
+        </p>
 
-    </form>
-    <hr>
+    </div>
 
-<h2>Submitted Feedback</h2>
 
-{% for item in feedbacks %}
+    <!-- Status Cards -->
 
-<div style="border:1px solid black; padding:10px; margin:10px;">
+    <div class="row g-4">
 
-    <h3>{{ item[1] }}</h3>
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>🟢</h2>
+                    <h5>Application</h5>
+                    <h3>{{ app_status }}</h3>
+                </div>
+            </div>
+        </div>
 
-    <p>{{ item[2] }}</p>
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>🗄️</h2>
+                    <h5>Database</h5>
+                    <h3>{{ db_status }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>🐳</h2>
+                    <h5>Docker</h5>
+                    <h3>{{ docker_status }}</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Platform Cards -->
+
+    <div class="row g-4 mt-3">
+
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>☁️</h2>
+                    <h5>Environment</h5>
+                    <h4>{{ environment }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>⚙️</h2>
+                    <h5>CI/CD</h5>
+                    <h4>{{ cicd }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card dashboard-card text-center">
+                <div class="card-body">
+                    <h2>📦</h2>
+                    <h5>Registry</h5>
+                    <h4>{{ registry }}</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- System Information -->
+
+    <div class="card mt-5 shadow">
+
+        <div class="card-body">
+
+            <h2 class="mb-4">
+                🖥️ System Information
+            </h2>
+
+            <table class="table table-dark table-striped">
+
+                <tr>
+                    <th>Application Version</th>
+                    <td>{{ version }}</td>
+                </tr>
+
+                <tr>
+                    <th>Hostname</th>
+                    <td>{{ hostname }}</td>
+                </tr>
+
+                <tr>
+                    <th>Current Time</th>
+                    <td>{{ current_time }}</td>
+                </tr>
+
+                <tr>
+                    <th>Health Status</th>
+                    <td>
+                        <span class="badge bg-success">
+                            {{ app_status }}
+                        </span>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Technology Stack -->
+
+    <div class="card mt-5 shadow">
+
+        <div class="card-body text-center">
+
+            <h2 class="mb-4">
+                🛠 Technology Stack
+            </h2>
+
+            <img
+                src="https://skillicons.dev/icons?i=python,flask,mysql,docker,jenkins,aws,git,github"
+                class="img-fluid"
+                alt="Technology Stack">
+
+        </div>
+
+    </div>
+
+
+    <!-- Architecture -->
+
+    <div class="card mt-5 shadow">
+
+        <div class="card-body">
+
+            <h2 class="mb-4">
+                📈 CI/CD Architecture
+            </h2>
+
+<pre class="architecture">
+
+GitHub
+   │
+   ▼
+Jenkins
+   │
+   ▼
+Docker Build
+   │
+   ▼
+Docker Hub
+   │
+   ▼
+AWS EC2
+   │
+   ▼
+Flask Application
+
+</pre>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <footer class="text-center mt-5">
+
+        <hr>
+
+        <h4>
+            Built by Tanay Chhabra
+        </h4>
+
+        <p>
+            Flask Two-Tier Application | Cloud & DevOps Portfolio Project
+        </p>
+
+    </footer>
 
 </div>
 
-{% endfor %}
-
 </body>
+
 </html>

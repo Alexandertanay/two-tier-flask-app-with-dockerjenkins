@@ -1,26 +1,34 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template
 from db import connection, cursor
+import socket
+from datetime import datetime
 
 app = Flask(__name__)
+
+APP_VERSION = "v1.0.0"
 
 
 @app.route("/")
 def home():
-    cursor.execute("SELECT * FROM feedback ORDER BY id DESC")
-    feedbacks = cursor.fetchall()
-    return render_template("index.html", feedbacks=feedbacks)
+    # Check database status
+    try:
+        cursor.execute("SELECT 1")
+        db_status = "Connected"
+    except Exception:
+        db_status = "Disconnected"
 
-
-@app.route("/submit", methods=["POST"])
-def submit():
-    name = request.form["name"]
-    feedback = request.form["feedback"]
-
-    sql = "INSERT INTO feedback (name, feedback) VALUES (%s, %s)"
-    cursor.execute(sql, (name, feedback))
-    connection.commit()
-
-    return redirect(url_for("home"))
+    return render_template(
+        "index.html",
+        app_status="Running",
+        db_status=db_status,
+        docker_status="Running",
+        environment="AWS EC2",
+        cicd="Jenkins",
+        registry="Docker Hub",
+        version=APP_VERSION,
+        hostname=socket.gethostname(),
+        current_time=datetime.now().strftime("%d %b %Y %I:%M:%S %p"),
+    )
 
 
 @app.route("/health")
