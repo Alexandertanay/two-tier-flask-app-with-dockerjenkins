@@ -55,6 +55,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Test SSH Connection') {
+            steps {
+                sshagent(credentials: ['ec2-ssh']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@54.242.134.32 "echo SSH Connection Successful"
+                    '''
+                }
+            }
+        }
     }
 
     post {
