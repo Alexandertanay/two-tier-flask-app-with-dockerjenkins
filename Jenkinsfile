@@ -3,25 +3,34 @@ pipeline {
 
     environment {
         IMAGE_NAME = "tanayyyy/flask-two-tier-app"
+        EC2_HOST = "54.242.134.32"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                echo 'Repository checked out by Jenkins'
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker compose build'
+                sh '''
+                docker compose build
+                '''
             }
         }
 
         stage('Run Containers') {
             steps {
-                sh 'docker compose up -d'
+                sh '''
+                docker compose down --remove-orphans || true
+
+                docker rm -f mysql flask-app 2>/dev/null || true
+
+                docker compose up --build -d
+                '''
             }
         }
 
@@ -41,6 +50,7 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
+
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
@@ -60,7 +70,11 @@ pipeline {
             steps {
                 sshagent(credentials: ['ec2-ssh']) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@54.242.134.32 "echo SSH Connection Successful"
+                    ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST "
+                    echo 'SSH Connection Successful'
+                    hostname
+                    pwd
+                    "
                     '''
                 }
             }
@@ -68,6 +82,10 @@ pipeline {
     }
 
     post {
+        always {
+            sh 'docker compose down --remove-orphans || true'
+        }
+
         success {
             echo 'Pipeline completed successfully!'
         }
