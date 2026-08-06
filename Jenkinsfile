@@ -71,7 +71,7 @@ print(urllib.request.urlopen('http://localhost:5000/health').read().decode())
 
         stage('Test SSH Connection') {
             steps {
-                sshagent(credentials: ['EC2 SSH']) {
+                sshagent(credentials: ['ec2-ssh']) {
 
                     sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST "echo 'SSH Connection Successful' && hostname && pwd"
