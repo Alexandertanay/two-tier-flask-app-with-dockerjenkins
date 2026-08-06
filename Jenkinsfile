@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "tanayyyy/flask-two-tier-app"
-        EC2_HOST = "54.242.134.32"
+        EC2_HOST   = "54.242.134.32"
     }
 
     stages {
@@ -26,9 +26,7 @@ pipeline {
             steps {
                 sh '''
                 docker compose down --remove-orphans || true
-
                 docker rm -f mysql flask-app 2>/dev/null || true
-
                 docker compose up --build -d
                 '''
             }
@@ -37,8 +35,13 @@ pipeline {
         stage('Health Check') {
             steps {
                 sh '''
+                echo "Waiting for application..."
                 sleep 15
-                docker exec flask-app python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:5000/health').read().decode())"
+
+                docker exec flask-app python -c "
+import urllib.request
+print(urllib.request.urlopen('http://localhost:5000/health').read().decode())
+"
                 '''
             }
         }
@@ -68,23 +71,19 @@ pipeline {
 
         stage('Test SSH Connection') {
             steps {
-                sshagent(credentials: ['ec2-ssh']) {
+                sshagent(credentials: ['EC2 SSH']) {
+
                     sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST "
-                    echo 'SSH Connection Successful'
-                    hostname
-                    pwd
-                    "
+                    ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST "echo 'SSH Connection Successful' && hostname && pwd"
                     '''
+
                 }
             }
         }
+
     }
 
     post {
-        always {
-            sh 'docker compose down --remove-orphans || true'
-        }
 
         success {
             echo 'Pipeline completed successfully!'
@@ -93,5 +92,6 @@ pipeline {
         failure {
             echo 'Pipeline failed.'
         }
+
     }
 }
